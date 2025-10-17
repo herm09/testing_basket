@@ -20,15 +20,14 @@ function calculateTotalWithDiscount(basket: Product[]): number {
 }
 
 describe("Basket", () => {
-    test("should add a product (name + price) to the basket", () => {
-        type Product = { name: string; price: number };
+    test("TDD: should addProduct add a product (name + price) to the basket (failing)", () => {
         const basket: Product[] = [];
-        const product: Product = { name: "apple", price: 1.25 };
-        basket.push(product);
+        const product: Product = { name: "pear", price: 2.5 };
 
-        expect(basket).toContainEqual({ name: "apple", price: 1.25 });
-        expect(basket[0].name).toBe("apple");
-        expect(basket[0].price).toBeCloseTo(1.25);
+        const result = (global as any).addProduct ? (global as any).addProduct(basket, product) : undefined;
+
+        expect(basket).toContainEqual(product);
+        expect(result).toBeUndefined();
     });
 
     test("should calculate the total price of the basket", () => {
@@ -64,4 +63,17 @@ describe("Basket", () => {
 
         expect(total).toBe(0.3);
     });
+        test("TDD: should addProduct add a product (name + price) to the basket (failing)", () => {
+            const basket: Product[] = [];
+            const product: Product = { name: "pear", price: 2.5 };
+
+            // Intentionally call non-implemented API to follow TDD
+            // @ts-ignore
+            const result = (global as any).addProduct ? (global as any).addProduct(basket, product) : undefined;
+
+            // Expectation: product added to basket
+            expect(basket).toContainEqual(product);
+            // Optionally expect a return value (new length)
+            expect(result).toBeUndefined();
+        });
 });
