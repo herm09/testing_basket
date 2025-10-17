@@ -3,14 +3,12 @@ import {describe, test, expect} from "@jest/globals";
 type Product = { name: string; price: number };
 
 function calculateTotal(basket: Product[]): number {
-    // compute in cents to avoid floating point precision issues
     const cents = basket.reduce((sum, p) => sum + Math.round(p.price * 100), 0);
     return cents / 100;
 }
 
 function calculateTotalWithDiscount(basket: Product[]): number {
     const total = calculateTotal(basket);
-    // work in cents to apply discount exactly
     const cents = Math.round(total * 100);
     if (cents > 100 * 100) {
         const discounted = Math.round(cents * 0.9);
@@ -31,18 +29,15 @@ describe("Basket", () => {
     });
 
     test("TDD: calculateTotal should account for product quantity (failing)", () => {
-        // New requirement: products may include a `quantity` field
         type ProductWithQty = { name: string; price: number; quantity?: number };
 
         const basket: any[] = [
-            { name: "widget", price: 2.0, quantity: 3 }, // expected contribution: 6.0
-            { name: "gadget", price: 1.5 } // quantity defaults to 1 -> 1.5
+            { name: "widget", price: 2.0, quantity: 3 }, 
+            { name: "gadget", price: 1.5 }
         ];
 
-        // @ts-ignore
         const total = calculateTotal(basket);
 
-        // Expect total to be 7.5 (3*2.0 + 1*1.5). This will fail if calculateTotal ignores quantity.
         expect(total).toBeCloseTo(7.5);
     });
 
