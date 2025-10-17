@@ -3,15 +3,20 @@ import {describe, test, expect} from "@jest/globals";
 type Product = { name: string; price: number };
 
 function calculateTotal(basket: Product[]): number {
-    return basket.reduce((sum, p) => sum + p.price, 0);
+    // compute in cents to avoid floating point precision issues
+    const cents = basket.reduce((sum, p) => sum + Math.round(p.price * 100), 0);
+    return cents / 100;
 }
 
 function calculateTotalWithDiscount(basket: Product[]): number {
     const total = calculateTotal(basket);
-    if (total > 100) {
-        return Number((total * 0.9).toFixed(2));
+    // work in cents to apply discount exactly
+    const cents = Math.round(total * 100);
+    if (cents > 100 * 100) {
+        const discounted = Math.round(cents * 0.9);
+        return discounted / 100;
     }
-    return Number(total.toFixed(2));
+    return cents / 100;
 }
 
 describe("Basket", () => {
