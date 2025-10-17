@@ -1,5 +1,19 @@
 import {describe, test, expect} from "@jest/globals";
 
+type Product = { name: string; price: number };
+
+function calculateTotal(basket: Product[]): number {
+    return basket.reduce((sum, p) => sum + p.price, 0);
+}
+
+function calculateTotalWithDiscount(basket: Product[]): number {
+    const total = calculateTotal(basket);
+    if (total > 100) {
+        return Number((total * 0.9).toFixed(2));
+    }
+    return Number(total.toFixed(2));
+}
+
 describe("Basket", () => {
     test("should add a product (name + price) to the basket", () => {
         type Product = { name: string; price: number };
@@ -13,29 +27,25 @@ describe("Basket", () => {
     });
 
     test("should calculate the total price of the basket", () => {
-        type Product = { name: string; price: number };
         const basket: Product[] = [
             { name: "apple", price: 1.25 },
             { name: "banana", price: 0.75 },
             { name: "orange", price: 1.50 }
         ];
 
-        const total = basket.reduce((sum, p) => sum + p.price, 0);
+        const total = calculateTotal(basket);
 
         expect(total).toBeCloseTo(3.5);
     });
 
     test("should apply 10% discount when total exceeds 100€ (TDD - failing test)", () => {
-        type Product = { name: string; price: number };
         const basket: Product[] = [
             { name: "expensive item 1", price: 60 },
             { name: "expensive item 2", price: 50 }
         ];
 
-        const totalWithDiscount = (global as any).calculateTotalWithDiscount
-            ? (global as any).calculateTotalWithDiscount(basket)
-            : undefined;
+        const totalWithDiscount = calculateTotalWithDiscount(basket);
 
         expect(totalWithDiscount).toBeCloseTo(99);
-    });    
+    });
 });
