@@ -25,5 +25,17 @@ describe("Basket", () => {
         expect(total).toBeCloseTo(3.5);
     });
 
-    
+    test("should apply 10% discount when total exceeds 100€ (TDD - failing test)", () => {
+        type Product = { name: string; price: number };
+        const basket: Product[] = [
+            { name: "expensive item 1", price: 60 },
+            { name: "expensive item 2", price: 50 }
+        ];
+
+        const totalWithDiscount = (global as any).calculateTotalWithDiscount
+            ? (global as any).calculateTotalWithDiscount(basket)
+            : undefined;
+
+        expect(totalWithDiscount).toBeCloseTo(99);
+    });    
 });
