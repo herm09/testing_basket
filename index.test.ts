@@ -12,5 +12,18 @@ describe("Basket", () => {
         expect(basket[0].price).toBeCloseTo(1.25);
     });
 
+    test("should calculate the total price of the basket", () => {
+        type Product = { name: string; price: number };
+        const basket: Product[] = [
+            { name: "apple", price: 1.25 },
+            { name: "banana", price: 0.75 },
+            { name: "orange", price: 1.50 }
+        ];
+
+        const total = basket.reduce((sum, p) => sum + p.price, 0);
+
+        expect(total).toBeCloseTo(3.5);
+    });
+
     
 });
