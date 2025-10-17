@@ -48,4 +48,15 @@ describe("Basket", () => {
 
         expect(totalWithDiscount).toBeCloseTo(99);
     });
+
+    test("should return an exact total in all cases (TDD - failing test)", () => {
+        const basket: Product[] = [
+            { name: "item a", price: 0.1 },
+            { name: "item b", price: 0.2 }
+        ];
+
+        const total = calculateTotal(basket);
+
+        expect(total).toBe(0.3);
+    });
 });
