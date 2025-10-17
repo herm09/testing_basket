@@ -20,7 +20,7 @@ function calculateTotalWithDiscount(basket: Product[]): number {
 }
 
 describe("Basket", () => {
-    test("TDD: should addProduct add a product (name + price) to the basket (failing)", () => {
+    test("TDD: should addProduct add a product (name + price) to the basket", () => {
         const basket: Product[] = [];
         const product: Product = { name: "pear", price: 2.5 };
 
@@ -30,19 +30,34 @@ describe("Basket", () => {
         expect(result).toBeUndefined();
     });
 
-    test("should calculate the total price of the basket", () => {
+    test("TDD: calculateTotal should account for product quantity (failing)", () => {
+        // New requirement: products may include a `quantity` field
+        type ProductWithQty = { name: string; price: number; quantity?: number };
+
+        const basket: any[] = [
+            { name: "widget", price: 2.0, quantity: 3 }, // expected contribution: 6.0
+            { name: "gadget", price: 1.5 } // quantity defaults to 1 -> 1.5
+        ];
+
+        // @ts-ignore
+        const total = calculateTotal(basket);
+
+        // Expect total to be 7.5 (3*2.0 + 1*1.5). This will fail if calculateTotal ignores quantity.
+        expect(total).toBeCloseTo(7.5);
+    });
+
+    test("should return an exact total in all cases", () => {
         const basket: Product[] = [
-            { name: "apple", price: 1.25 },
-            { name: "banana", price: 0.75 },
-            { name: "orange", price: 1.50 }
+            { name: "item a", price: 0.1 },
+            { name: "item b", price: 0.2 }
         ];
 
         const total = calculateTotal(basket);
 
-        expect(total).toBeCloseTo(3.5);
+        expect(total).toBe(0.3);
     });
 
-    test("should apply 10% discount when total exceeds 100€ (TDD - failing test)", () => {
+    test("should apply 10% discount when total exceeds 100€", () => {
         const basket: Product[] = [
             { name: "expensive item 1", price: 60 },
             { name: "expensive item 2", price: 50 }
@@ -53,7 +68,7 @@ describe("Basket", () => {
         expect(totalWithDiscount).toBeCloseTo(99);
     });
 
-    test("should return an exact total in all cases (TDD - failing test)", () => {
+    test("should return an exact total in all cases", () => {
         const basket: Product[] = [
             { name: "item a", price: 0.1 },
             { name: "item b", price: 0.2 }
@@ -63,17 +78,4 @@ describe("Basket", () => {
 
         expect(total).toBe(0.3);
     });
-        test("TDD: should addProduct add a product (name + price) to the basket (failing)", () => {
-            const basket: Product[] = [];
-            const product: Product = { name: "pear", price: 2.5 };
-
-            // Intentionally call non-implemented API to follow TDD
-            // @ts-ignore
-            const result = (global as any).addProduct ? (global as any).addProduct(basket, product) : undefined;
-
-            // Expectation: product added to basket
-            expect(basket).toContainEqual(product);
-            // Optionally expect a return value (new length)
-            expect(result).toBeUndefined();
-        });
 });
